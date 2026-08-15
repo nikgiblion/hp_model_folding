@@ -1,31 +1,18 @@
 import random
 import math
 
-from conformation import self_avoiding_walking_check
 from energy import energy
 
-#Operations for random choice. 
-ROTATIONAL_OPERATIONS = (
-    lambda dx, dy: (-dy, dx),  #90 degrees
-    lambda dx, dy: (dy, -dx), #-90 degrees
-    lambda dx, dy: (-dx, -dy), #180 degrees 
+# from conformation import self_avoiding_walking_check
+# from conformation import pivot_move
+# from conformation import random_conformation
+
+from conformation import (
+    self_avoiding_walking_check,
+    pivot_move,
+    random_conformation,
+    linear_conformation,
 )
-
-#Rotational operations to perform for tail after rotational center.
-def pivot_move(coords, rng):
-    n = len(coords)
-    pivot_r = rng.randrange(1, n-1) #edge rotations mean nothing
-    rotate_side = rng.choice(ROTATIONAL_OPERATIONS)
-    px, py = coords[pivot_r]
-    new_coords = coords[:pivot_r + 1] #not a problem because of tuple
-
-    for x, y in coords[pivot_r + 1:]:
-        dx, dy = x - px, y - py #from pivot_r position
-        rdx, rdy = rotate_side(dx, dy)
-        new_coords.append((px + rdx, py + rdy))
-    return new_coords
-
-
 
 #Metropolis Criterium to accept operations to go out of local minimum.
 # dE <= 0 (always take it), else with probability p = exp(-dE/T)
@@ -56,4 +43,22 @@ def annealing_process(sequence, start_coords, t_start=2.0, t_end=0.05, cooling=0
         history.append((temperature, current_e, best_e))
         temperature *= cooling
     return best, best_e, history
+
+#To do multiple starts with different initial states (linear + n_starts - 1 structures)
+def multi_start_annealing(sequence, n_starts=10, seed=0, t_start=2.0, t_end=0.05, cooling=0.995, steps_per_temp=200):    
+    rng = random.Random(seed)
+    n = len(sequence)
+    results = []
+
+    for i in range(n_starts):
+        if i == 0:
+            start = linear_conformation(n)
+        else:
+            start = random_conformation(n,rng)
+
+        run_seed = rng.randrange(2**32)
+        best, best_e, history = annealing_process(sequence, start, seed=run_seed, t_start=t_start, t_end=t_end, cooling=cooling, steps_per_temp=steps_per_temp)
+        results.append((best_e, best))
+
+    return results
 
