@@ -25,19 +25,22 @@ def report(sequence, coords):
     ]
     return "\n".join(lines)
 
-def multi_report(sequence, results, max_shown=5):
+
+#Old one without json and txt
+def multi_report(sequence, results, max_shown=None):
     best_e, structures, counts = unique_ground_states(sequence, results)
 
     lines = []
     lines.append("=" * 50)
     lines.append(f"Runs : {len(results)}")
     lines.append("")
-    energies = sorted(e for e, _ in results)
+    energies = sorted(e for e, _ in results) #doesn't matter
     distribution = Counter(energies)
     lines.append("Energy distribution : ")
+    max_count = max(distribution.values())
     for e in sorted(distribution):
-        bar = "#" * distribution[e]
-        lines. append(f" E = {e:5.0f}  {bar}  ({distribution[e]})")
+        bar_len = round(30 * distribution[e] / max_count)
+        lines.append(f" E = {e:5.0f}  {'#' * bar_len}  ({distribution[e]})")
 
     lines.append("")
     lines.append(f"Energy minimum       : {best_e:.0f}")
@@ -45,10 +48,11 @@ def multi_report(sequence, results, max_shown=5):
     lines.append("")
 
     for i, (coords, count) in enumerate(zip(structures, counts), start=1):
-        if i > max_shown:
+        if max_shown is not None and i > max_shown:
             lines.append(f"... and also {len(structures) - max_shown} structures")
             break
         lines.append(f"--- structure {i} (was found {count} times) ---")
         lines.append(report(sequence,coords))
         lines.append("")
     return "\n".join(lines)
+
