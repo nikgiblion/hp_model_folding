@@ -1,3 +1,4 @@
+import re
 # sequence = "HPPHHPPH"
 
 #Operations for random choice. 
@@ -7,11 +8,41 @@ ROTATIONAL_OPERATIONS = (
     lambda dx, dy: (-dx, -dy), #180 degrees 
 )
 
+
+#Expand sequence : (HP)2 -> HPHP; H2P2 -> HHPP.
+def expand_sequence(compressed):
+    text = compressed.strip().upper().replace(" ", "")
+    pattern = re.compile(r"\(([^()]+)\)(\d*)")
+    while "(" in text:
+        match = pattern.search(text)
+        if match is None:
+            raise ValueError(f"Unpaired brackets in : {compressed}")
+        inner = _expand_flat(match.group(1))
+        times = int(match.group(2)) if match.group(2) else 1
+        text = text[:match.start()] + inner * times + text[match.end():]
+
+    return _expand_flat(text)
+
+#expand without brackets : H2P3 -> HHPPP.
+def _expand_flat(text):
+    leftover = re.sub(r"[HP\d]", "", text)
+    if leftover:
+        raise ValueError(f"Not allowed symbols : {leftover} in {text}")
+    result = []
+    for symbol, count in re.findall(r"([HP])(\d*)", text):
+        result.append(symbol * (int(count) if count else 1))
+    joined = "".join(result)
+    return joined
+
 #Chekc if a sequence has only H and P residues and also normalized it.
 def sequence_check(sequence):
     sequence = sequence.strip().upper()
     if not sequence:
         raise ValueError("The sequence is empty")
+
+    if any(c.isdigit() or c in "()" for c in sequence):
+        sequence = expand_sequence(sequence)
+
     wrong_symbols = set(sequence) - {"H", "P"}
     if wrong_symbols:
         raise ValueError(f"Forbidden symbols: {sorted(wrong_symbols)}")
@@ -67,5 +98,4 @@ def random_conformation(n, rng, n_moves=None):
         if self_avoiding_walking_check(candidate):
             coords = candidate
     return coords
-
 
