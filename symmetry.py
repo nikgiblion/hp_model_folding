@@ -67,8 +67,8 @@ def canonical_structure(sequence, coords, allow_reverse=True):
 #Chosing unique structures (count uniques and return their figures).
 def unique_ground_states(sequence, results):
     best_e = min(e for e, _ in results)
-    conformers = {}
-    counts = {} #how many times was observed
+    conformers = {} #coordinates that algorithm finds
+    counts = {} #how many times was observed (runs to find this)
     for e, coords in results:
         if e != best_e:
             continue
