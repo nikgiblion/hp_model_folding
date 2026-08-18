@@ -19,7 +19,7 @@ def all_contacts(coords):
     contacts = []
     n = len(coords)
     for i in range(n):
-        for j in range(i + 2, n):
+        for j in range(i + 3, n, 2):  #update from range(i + 2, n)
             if lattice_neighbors(coords[i], coords[j]):
                 contacts.append((i,j))
     return contacts
