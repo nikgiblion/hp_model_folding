@@ -14,7 +14,7 @@ def parse_args():
     parser.add_argument("--t-start", type=float, default=2.0)
     parser.add_argument("--t-end", type=float, default=0.05)
     parser.add_argument("--cooling", type=float, default=0.995)
-    parser.add_argument("--steps", type=int, default=200)  
+    parser.add_argument("--steps_per_temp", type=int, default=200)  
     parser.add_argument("--n_starts", type=int, default=1) #number of independent annealing starts
     parser.add_argument("--outdir", default="runs")
     parser.add_argument("--no-save", action="store_true")
@@ -33,7 +33,7 @@ def main():
         best, best_e, history = annealing_process(
         sequence, start,
         t_start=args.t_start, t_end=args.t_end,
-        cooling=args.cooling, steps_per_temp=args.steps,
+        cooling=args.cooling, steps_per_temp=args.steps_per_temp,
         seed=args.seed,
         )
 
@@ -43,7 +43,7 @@ def main():
             sequence, n_starts=args.n_starts,
             seed=args.seed, t_start=args.t_start,
             t_end=args.t_end, cooling=args.cooling,
-            steps_per_temp=args.steps,
+            steps_per_temp=args.steps_per_temp,
             )
         # print(multi_report(sequence, results))
         print(multi_report(sequence, results, max_shown=args.max_shown))

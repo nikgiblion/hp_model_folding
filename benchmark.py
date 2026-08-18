@@ -128,7 +128,7 @@ def parse_args():
     parser.add_argument("--t-start", type=float, default=2.0)
     parser.add_argument("--t-end", type=float, default=0.05)
     parser.add_argument("--cooling", type=float, default=0.995)
-    parser.add_argument("--steps", type=int, default=200)
+    parser.add_argument("--steps_per_temp", type=int, default=None)
     parser.add_argument("--outdir", default="runs")
     parser.add_argument("--no-save", action="store_true")
     return parser.parse_args()
