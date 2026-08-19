@@ -42,3 +42,14 @@ def energy(sequence, coords):
         etot += epair
     return etot
 
+#Tests generated with Claude Opus 5
+
+if __name__ == "__main__":
+    from conformation import linear_conformation
+
+    assert energy("HHHH", linear_conformation(4)) == 0
+    square = [(0, 0), (1, 0), (1, 1), (0, 1)]
+    assert energy("HHHH", square) == -1
+    assert energy("HPPH", square) == -1
+    assert energy("PHHP", square) == 0
+    print("energy: ok")

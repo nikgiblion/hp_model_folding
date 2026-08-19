@@ -8,6 +8,9 @@ ROTATIONAL_OPERATIONS = (
     lambda dx, dy: (-dx, -dy), #180 degrees 
 )
 
+#Directions in different sides.
+DIRECTIONS = ((1, 0), (-1, 0), (0, 1), (0, -1))
+
 
 #Expand sequence : (HP)2 -> HPHP; H2P2 -> HHPP.
 def expand_sequence(compressed):
@@ -88,6 +91,46 @@ def pivot_move(coords, rng):
         new_coords.append((px + rdx, py + rdy))
     return new_coords
 
+#tail move to rotate tail residue aroung one neighbor
+def tail_move(coords, rng):
+    new_coords = list(coords)
+    if rng.random() < 0.5:
+        tail, anchor = 0, 1
+    else:
+        tail, anchor = len(coords) - 1, len(coords) - 2
+
+    anch_x, anch_y = coords[anchor]
+    tail_x, tail_y = coords[tail]
+    rotate = rng.choice(ROTATIONAL_OPERATIONS[:2])
+    dx, dy = (tail_x - anch_x), (tail_y - anch_y)
+    rdx, rdy = rotate(dx, dy)
+    new_coords[tail] = (anch_x + rdx, anch_y + rdy)
+    return new_coords
+
+#Corner is flipped diagonally. Works when i-1 and i+1 form an angle.
+def corner_flip(coords, rng):
+    n = len(coords)
+    i = rng.randrange(1, n - 1)
+    (x1, y1), (x2, y2) = coords[i - 1], coords[i + 1]
+
+    if x1 == x2 or y1 == y2: #must be not on 1 line
+        return None
+
+    new_coords = list(coords)
+    new_coords[i] = (x1 + x2 - coords[i][0], y1 + y2 - coords[i][1])
+    return new_coords
+
+#Probabilistic choice of moves between pivot, tail, corner moves
+def random_move(coords, rng, pivot_prob=0.8):
+    r = rng.random()
+    if r < pivot_prob:
+        return pivot_move(coords, rng)
+    elif r < pivot_prob + (1 - pivot_prob) / 2:
+        return tail_move(coords, rng)
+    else:
+        return corner_flip(coords, rng)
+
+
 #Generation of random initial structures for future search.
 def random_conformation(n, rng, n_moves=None):
     coords = linear_conformation(n)
@@ -99,3 +142,26 @@ def random_conformation(n, rng, n_moves=None):
             coords = candidate
     return coords
 
+#Tests generated with Claude Opus 5
+
+if __name__ == "__main__":
+    import random
+
+    assert sequence_check(" hphp ") == "HPHP"
+    assert linear_conformation(3) == [(0, 0), (1, 0), (2, 0)]
+    assert expand_sequence("H2(P2H)7H") == "HH" + "PPH" * 7 + "H"
+    assert len(expand_sequence("H2(P2H)7H")) == 24
+
+    square = [(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)]
+    assert connectivity_check(square)
+    assert not self_avoiding_walking_check(square)
+    assert not final_validation_sequence(square)
+
+    rng = random.Random(0)
+    start = linear_conformation(10)
+    for _ in range(200):
+        moved = pivot_move(start, rng)
+        assert len(moved) == len(start)
+        assert connectivity_check(moved)
+
+    print("conformation: ok")
