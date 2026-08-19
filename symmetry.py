@@ -15,7 +15,6 @@ SYMMETRIES = (
     lambda x, y: (-x, y), #reflection (vertical)
     lambda x, y: (-y, -x), #reflection (2nd diagonal)
     lambda x, y: (x, -y), #reflection (horisontal)
-
 )
 
 #Applying symmetrical operation.
