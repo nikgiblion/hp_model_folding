@@ -1,11 +1,12 @@
 import argparse
 import time
+from datetime import datetime
 from collections import Counter
 
 from conformation import expand_sequence
 from annealing import multi_start_annealing
 from symmetry import unique_ground_states
-from storage import make_run_id, save_run
+from storage import save_report
 
 """
 Were taken from refs: 
@@ -65,12 +66,12 @@ def load_benchmarks():
         loaded.append({**entry, "sequence": seq})
     return loaded
 
-def run_one(entry, n_starts=20, seed=0, **anneal_params):
+def run_one(entry, nstarts=20, seed=0, **anneal_params):
     sequence = entry["sequence"]
     target = entry["best_known"]
 
     t0 = time.time()
-    results = multi_start_annealing(sequence, n_starts=n_starts, seed=seed, **anneal_params)
+    results, move_stats = multi_start_annealing(sequence, nstarts=nstarts, seed=seed, **anneal_params)
     elapsed = time.time() - t0
 
     energies = []
@@ -95,7 +96,7 @@ def run_one(entry, n_starts=20, seed=0, **anneal_params):
 
         "gap": found - target,
 
-        "hit_rate": hits / n_starts,
+        "hit_rate": hits / nstarts,
 
         "mean_energy": sum(energies) / len(energies),
 
@@ -105,23 +106,31 @@ def run_one(entry, n_starts=20, seed=0, **anneal_params):
 
         "distribution": dict(Counter(energies)),
 
+        "sa_reject": move_stats["sa_reject_rate"],
+
+        "accept": move_stats["accept_rate"],
+
     }
 
-def print_table(rows):
-    header = f"{'ID':<8}{'len':>5}{'target':>8}{'found':>7}{'gap':>5}{'hit%':>7}{'mean':>8}{'uniq':>6}{'sec':>7}"
-    print(header)
-    print("-" * len(header))
+#Forming main information about benchmark
+def format_table(rows):
+    header = (f"{'ID':<8}{'len':>5}{'target':>8}{'found':>7}{'gap':>5}"
+              f"{'hit%':>7}{'mean':>8}{'uniq':>6}{'saRej':>7}{'acc':>6}{'sec':>7}")
+    lines = [header, "-" * len(header)]
     for r in rows:
-        print(f"{r['id']:<8}{r['length']:>5}{r['target']:>8.0f}{r['found']:>7.0f}"
-              f"{r['gap']:>5.0f}{100*r['hit_rate']:>6.0f}%{r['mean_energy']:>8.2f}"
-              f"{r['n_unique']:>6}{r['seconds']:>7.1f}")
+        lines.append(
+            f"{r['id']:<8}{r['length']:>5}{r['target']:>8.0f}{r['found']:>7.0f}"
+            f"{r['gap']:>5.0f}{100*r['hit_rate']:>6.0f}%{r['mean_energy']:>8.2f}"
+            f"{r['n_unique']:>6}{100*r['sa_reject']:>6.0f}%"
+            f"{100*r['accept']:>5.0f}%{r['seconds']:>7.1f}")
+    return "\n".join(lines)
 
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Benchmark: compare found energies with published values")
     parser.add_argument("--max-length", type=int, default=25,
                         help="skip sequences longer than this")
-    parser.add_argument("--n-starts", type=int, default=20,
+    parser.add_argument("--nstarts", type=int, default=20,
                         help="independent annealing runs per sequence")
     parser.add_argument("--seed", type=int, default=0,
                         help="same seed for all sequences (common random numbers)")
@@ -139,12 +148,31 @@ def main():
     selected = [b for b in benchmarks if b["length"] <= args.max_length]
 
     rows = []
+    print("")
+    print("Running Benchmark dataset")
     for entry in selected:
         print(f"running {entry['id']} (n={entry['length']})...", flush=True)
-        rows.append(run_one(entry, n_starts=args.n_starts, seed=args.seed))
+        rows.append(run_one(
+            entry,
+            nstarts=args.nstarts,
+            seed=args.seed,
+            t_start=args.t_start,
+            t_end=args.t_end,
+            cooling=args.cooling,
+            steps_per_temp=args.steps_per_temp,
+        ))
 
+    table_text = format_table(rows)
     print()
-    print_table(rows)
+    print(table_text)
+
+    if not args.no_save:
+        header = (f"benchmark  max_length={args.max_length} nstarts={args.nstarts} "
+                  f"seed={args.seed} cooling={args.cooling} "
+                  f"t_start={args.t_start} t_end={args.t_end}")
+        run_id = "benchmark_" + datetime.now().strftime("%Y%m%d_%H%M%S")
+        path = save_report(header + "\n\n" + table_text, run_id, outdir=args.outdir)
+        print(f"Saved to : {path}")
 
 if __name__ == "__main__":
     main()
