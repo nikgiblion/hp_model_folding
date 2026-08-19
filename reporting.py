@@ -96,6 +96,7 @@ def multi_report(sequence, results, max_shown=None, per_level=None, binding=Fals
                 lines.append(f"--- E={e:.0f}, structure {i} (found {count} times) ---")
                 lines.append(report(sequence, coords))
                 lines.append("")
+                
     # Ligand binding analysis
     if binding:
         lines.append("=" * 50)
