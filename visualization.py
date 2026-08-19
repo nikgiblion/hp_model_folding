@@ -11,7 +11,7 @@ SYMBOLS = {
            }
 
 #To vizualize ASCII figure for conformation.
-def ascii_vizualization(sequence, coords):
+def ascii_vizualization(sequence, coords, ligand_sites=None):
     if len(sequence) != len(coords):
         raise ValueError(f"Different lengths: {len(sequence) and len(coords)}")
 
@@ -46,6 +46,13 @@ def ascii_vizualization(sequence, coords):
         column2, row2 = pos_to_cell(x2, y2)
         mid_column, mid_row = (column1 + column2) // 2, (row1 + row2) // 2
         grid[mid_row][mid_column] = "-" if row1 == row2 else "|"
+
+    #Draw Ligand cavities
+    if ligand_sites:
+        for x, y in ligand_sites:
+            col, row = pos_to_cell(x, y)
+            if 0 <= row < height and 0 <= col < width:
+                grid[row][col] = "L"
 
     #Combine all rows in one figure
     return "\n".join("".join(row) for row in reversed(grid)) #to print from top and not from bottom line
