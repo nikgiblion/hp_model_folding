@@ -79,9 +79,6 @@ def unique_ground_states(sequence, results):
     keys = list(conformers)
     return best_e, [conformers[k] for k in keys], [counts[k] for k in keys]
 
-
-
-
 #Grouping by energy and chosing unique structures (count uniques and return their figures).
 def unique_by_energy(sequence, results):
     by_energy = {}
