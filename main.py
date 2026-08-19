@@ -7,19 +7,32 @@ from storage import make_run_id, save_report
 DEFAULT_SEQUENCE = "HPHPPHHPHPPHPHHPPHPH" #know benchmark sequence with E = -9
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="HP model folding with annealing algorithm for 2D cases (ver.0.1)")
-    parser.add_argument("--sequence", default=DEFAULT_SEQUENCE)
-    parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument("--t-start", type=float, default=2.0)
-    parser.add_argument("--t-end", type=float, default=0.05)
-    parser.add_argument("--cooling", type=float, default=0.995)
-    parser.add_argument("--steps_per_temp", type=int, default=None)  
-    parser.add_argument("--nstarts", type=int, default=20) #number of independent annealing starts
-    parser.add_argument("--outdir", default="runs")
-    parser.add_argument("--no-save", action="store_true")
-    parser.add_argument("--max-shown", type=int, default=5)
-    parser.add_argument("--binding", action="store_true")
-    parser.add_argument("--ligand", default="H", choices=["H", "P"])
+    parser = argparse.ArgumentParser(
+        description="HP model protein folding on a 2D square lattice (simulated annealing)")
+    parser.add_argument("--sequence", default=DEFAULT_SEQUENCE,
+                        help="HP sequence, plain or compressed, e.g. H2(P2H)7H")
+    parser.add_argument("--seed", type=int, default=0,
+                        help="RNG seed for reproducibility")
+    parser.add_argument("--nstarts", type=int, default=20,
+                        help="number of independent annealing runs")
+    parser.add_argument("--t-start", type=float, default=2.0,
+                        help="initial temperature")
+    parser.add_argument("--t-end", type=float, default=0.05,
+                        help="final temperature")
+    parser.add_argument("--cooling", type=float, default=0.995,
+                        help="geometric cooling factor per temperature step")
+    parser.add_argument("--steps_per_temp", type=int, default=None,
+                        help="moves per temperature (default: 10 x chain length)")
+    parser.add_argument("--binding", action="store_true",
+                        help="analyse internal cavities and ligand binding")
+    parser.add_argument("--ligand", default="H", choices=["H", "P"],
+                        help="ligand type for binding analysis")
+    parser.add_argument("--max-shown", type=int, default=5,
+                        help="max ground-state structures printed to terminal")
+    parser.add_argument("--outdir", default="runs",
+                        help="directory for saved reports")
+    parser.add_argument("--no-save", action="store_true",
+                        help="do not write a report file")
     return parser.parse_args()
 
 def main():

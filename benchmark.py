@@ -134,12 +134,18 @@ def parse_args():
                         help="independent annealing runs per sequence")
     parser.add_argument("--seed", type=int, default=0,
                         help="same seed for all sequences (common random numbers)")
-    parser.add_argument("--t-start", type=float, default=2.0)
-    parser.add_argument("--t-end", type=float, default=0.05)
-    parser.add_argument("--cooling", type=float, default=0.995)
-    parser.add_argument("--steps_per_temp", type=int, default=None)
-    parser.add_argument("--outdir", default="runs")
-    parser.add_argument("--no-save", action="store_true")
+    parser.add_argument("--t-start", type=float, default=2.0,
+                        help="initial temperature")
+    parser.add_argument("--t-end", type=float, default=0.05,
+                        help="final temperature")
+    parser.add_argument("--cooling", type=float, default=0.995,
+                        help="geometric cooling factor per temperature step")
+    parser.add_argument("--steps_per_temp", type=int, default=None,
+                        help="moves per temperature (default: 10 x chain length)")
+    parser.add_argument("--outdir", default="runs",
+                        help="directory for saved reports")
+    parser.add_argument("--no-save", action="store_true",
+                        help="do not write a report file")
     return parser.parse_args()
 
 def main():
