@@ -63,7 +63,6 @@ def canonical_structure(sequence, coords, allow_reverse=True):
 
     return min(variants)
 
-
 #Chosing unique structures (count uniques and return their figures).
 def unique_ground_states(sequence, results):
     best_e = min(e for e, _ in results)
@@ -72,12 +71,41 @@ def unique_ground_states(sequence, results):
     for e, coords in results:
         if e != best_e:
             continue
-        conf = canonical_structure(sequence, coords)
-        if conf not in conformers:
-            conformers[conf] = coords
-        counts[conf] = counts.get(conf, 0) + 1
+        key = canonical_structure(sequence, coords)
+        if key not in conformers:
+            conformers[key] = coords
+        counts[key] = counts.get(key, 0) + 1
 
-    confs = list(conformers)
-    return best_e, [conformers[k] for k in confs], [counts[k] for k in confs]
+    keys = list(conformers)
+    return best_e, [conformers[k] for k in keys], [counts[k] for k in keys]
 
 
+
+
+#Grouping by energy and chosing unique structures (count uniques and return their figures).
+def unique_by_energy(sequence, results):
+    by_energy = {}
+    for e, coords in results:
+        by_energy.setdefault(e, []).append(coords)
+
+    levels = []
+    for e in sorted(by_energy):
+        conformers = {} #coordinates that algorithm finds
+        counts = {} #how many times was observed (runs to find this)
+        for coords in by_energy[e]:
+            key = canonical_structure(sequence, coords)
+            if key not in conformers:
+                conformers[key] = coords
+            counts[key] = counts.get(key, 0) + 1
+        keys = list(conformers)
+        levels.append((e, [conformers[k] for k in keys], [counts[k] for k in keys]))
+    return levels
+
+#Tests generated with Claude Opus 5
+if __name__ == "__main__":
+    square = [(0, 0), (1, 0), (1, 1), (0, 1)]
+    assert canonical_form(square) == canonical_form([(x + 5, y + 3) for x, y in square])
+    assert canonical_form(square) == canonical_form([(-y, x) for x, y in square])
+    assert canonical_form(square) != canonical_form([(0,0),(1,0),(2,0),(2,1)])
+    assert len({t(3, 7) for t in SYMMETRIES}) == 8
+    print("symmetry: ok")

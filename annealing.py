@@ -1,16 +1,9 @@
 import random
 import math
-
 from energy import energy
-
-# from conformation import self_avoiding_walking_check
-# from conformation import pivot_move
-# from conformation import random_conformation
-
 from conformation import (
     self_avoiding_walking_check,
     random_move,
-
     random_conformation,
     linear_conformation,
 )

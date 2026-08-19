@@ -1,5 +1,3 @@
-#From conformation import linear_conformation
-
 #Dictionary of all contact residues and their energies.
 ENERGY_CONTACT_PAIRS = {
     ("H", "H"): -1.0,

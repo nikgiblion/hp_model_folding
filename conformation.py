@@ -1,5 +1,4 @@
 import re
-# sequence = "HPPHHPPH"
 
 #Operations for random choice. 
 ROTATIONAL_OPERATIONS = (

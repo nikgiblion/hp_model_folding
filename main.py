@@ -14,7 +14,7 @@ def parse_args():
     parser.add_argument("--t-end", type=float, default=0.05)
     parser.add_argument("--cooling", type=float, default=0.995)
     parser.add_argument("--steps_per_temp", type=int, default=None)  
-    parser.add_argument("--nstarts", type=int, default=1) #number of independent annealing starts
+    parser.add_argument("--nstarts", type=int, default=20) #number of independent annealing starts
     parser.add_argument("--outdir", default="runs")
     parser.add_argument("--no-save", action="store_true")
     parser.add_argument("--max-shown", type=int, default=5)

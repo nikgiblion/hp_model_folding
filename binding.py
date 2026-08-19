@@ -1,6 +1,6 @@
 """
 This module is extension to the task and is about finding binding sites
-for ligands.
+for ligands. Two types of ligand : H and P, based on it contact energy is different.
 """
 
 from collections import deque
