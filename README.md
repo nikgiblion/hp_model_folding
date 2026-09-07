@@ -1,3 +1,4 @@
+[![tests](https://github.com/nikgiblion/hp_model_folding/actions/workflows/tests.yml/badge.svg?branch=post-deadline)](https://github.com/nikgiblion/hp_model_folding/actions/workflows/tests.yml)
 # HP model[1,3] of protein folding on a 2D lattice with binding extension
 
 Search for the ground state by simulated annealing, with ground-state degeneracy
