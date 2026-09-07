@@ -1,4 +1,4 @@
-# HP model[1,2] of protein folding on a 2D lattice with binding extension
+# HP model[1,3] of protein folding on a 2D lattice with binding extension
 
 Search for the ground state by simulated annealing, with ground-state degeneracy
 analysis and ligand binding site detection.
