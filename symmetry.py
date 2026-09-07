@@ -97,11 +97,11 @@ def unique_by_energy(sequence, results):
         levels.append((e, [conformers[k] for k in keys], [counts[k] for k in keys]))
     return levels
 
-#Tests generated with Claude Opus 5
-if __name__ == "__main__":
-    square = [(0, 0), (1, 0), (1, 1), (0, 1)]
-    assert canonical_form(square) == canonical_form([(x + 5, y + 3) for x, y in square])
-    assert canonical_form(square) == canonical_form([(-y, x) for x, y in square])
-    assert canonical_form(square) != canonical_form([(0,0),(1,0),(2,0),(2,1)])
-    assert len({t(3, 7) for t in SYMMETRIES}) == 8
-    print("symmetry: ok")
+# #Tests generated with Claude Opus 5
+# if __name__ == "__main__":
+#     square = [(0, 0), (1, 0), (1, 1), (0, 1)]
+#     assert canonical_form(square) == canonical_form([(x + 5, y + 3) for x, y in square])
+#     assert canonical_form(square) == canonical_form([(-y, x) for x, y in square])
+#     assert canonical_form(square) != canonical_form([(0,0),(1,0),(2,0),(2,1)])
+#     assert len({t(3, 7) for t in SYMMETRIES}) == 8
+#     print("symmetry: ok")

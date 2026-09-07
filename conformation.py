@@ -143,24 +143,24 @@ def random_conformation(n, rng, n_moves=None):
 
 #Tests generated with Claude Opus 5
 
-if __name__ == "__main__":
-    import random
+# if __name__ == "__main__":
+#     import random
 
-    assert sequence_check(" hphp ") == "HPHP"
-    assert linear_conformation(3) == [(0, 0), (1, 0), (2, 0)]
-    assert expand_sequence("H2(P2H)7H") == "HH" + "PPH" * 7 + "H"
-    assert len(expand_sequence("H2(P2H)7H")) == 24
+#     assert sequence_check(" hphp ") == "HPHP"
+#     assert linear_conformation(3) == [(0, 0), (1, 0), (2, 0)]
+#     assert expand_sequence("H2(P2H)7H") == "HH" + "PPH" * 7 + "H"
+#     assert len(expand_sequence("H2(P2H)7H")) == 24
 
-    square = [(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)]
-    assert connectivity_check(square)
-    assert not self_avoiding_walking_check(square)
-    assert not final_validation_sequence(square)
+#     square = [(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)]
+#     assert connectivity_check(square)
+#     assert not self_avoiding_walking_check(square)
+#     assert not final_validation_sequence(square)
 
-    rng = random.Random(0)
-    start = linear_conformation(10)
-    for _ in range(200):
-        moved = pivot_move(start, rng)
-        assert len(moved) == len(start)
-        assert connectivity_check(moved)
+#     rng = random.Random(0)
+#     start = linear_conformation(10)
+#     for _ in range(200):
+#         moved = pivot_move(start, rng)
+#         assert len(moved) == len(start)
+#         assert connectivity_check(moved)
 
-    print("conformation: ok")
+#     print("conformation: ok")

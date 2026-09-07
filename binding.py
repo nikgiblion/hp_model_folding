@@ -75,15 +75,15 @@ def check_cavities(sequence, coords, ligand="H", min_neighbors=2):
         })
     return sorted(sites, key=lambda s: s["energy"])
 
-#Tests generated with Claude Opus 5
-if __name__ == "__main__":
-    from conformation import linear_conformation
+# #Tests generated with Claude Opus 5
+# if __name__ == "__main__":
+#     from conformation import linear_conformation
 
-    ring = [(0,0),(1,0),(2,0),(2,1),(2,2),(1,2),(0,2),(0,1)]
-    assert inside_cavities(ring) == {(1, 1)}
-    assert inside_cavities(linear_conformation(10)) == set()
+#     ring = [(0,0),(1,0),(2,0),(2,1),(2,2),(1,2),(0,2),(0,1)]
+#     assert inside_cavities(ring) == {(1, 1)}
+#     assert inside_cavities(linear_conformation(10)) == set()
 
-    result = check_cavities("HHHHHHHH", ring, ligand="H")
-    assert result[0]["energy"] == -4.0
-    assert check_cavities("PPPPPPPP", ring, ligand="H")[0]["energy"] == 0.0
-    print("binding: ok")
+#     result = check_cavities("HHHHHHHH", ring, ligand="H")
+#     assert result[0]["energy"] == -4.0
+#     assert check_cavities("PPPPPPPP", ring, ligand="H")[0]["energy"] == 0.0
+#     print("binding: ok")

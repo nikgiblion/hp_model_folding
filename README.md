@@ -16,6 +16,8 @@ native fold is the conformation minimising it.
 
 Python 3.9+, standard library only. Nothing to install.
 
+Running the tests requires pytest: `pip install -r requirements-dev.txt`, then `pytest`.
+
 ## Usage
 
 ```bash
@@ -32,8 +34,10 @@ Full parameter list is avaliable with command: `python main.py --help`, `python 
 
 ## Project structure
 
-| File | Purpose |
+| File/Dir | Purpose |
 |------|---------|
+| `tests/` | pytest suite |
+| `tools/` | timing scripts |
 | `conformation.py` | lattice representation, validity checks, move set, sequence parsing |
 | `energy.py` | contact table and energy evaluation |
 | `annealing.py` | Metropolis criterion, annealing schedule, multi-start driver |

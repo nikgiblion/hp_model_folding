@@ -86,19 +86,19 @@ def energy(sequence, coords):
 
     
      
-#Tests generated with Claude Opus 5.
+# #Tests generated with Claude Opus 5.
 
-if __name__ == "__main__":
-    from conformation import linear_conformation
+# if __name__ == "__main__":
+#     from conformation import linear_conformation
 
-    assert energy("HHHH", linear_conformation(4)) == 0
-    square = [(0, 0), (1, 0), (1, 1), (0, 1)]
-    assert energy("HHHH", square) == -1
-    assert energy("HPPH", square) == -1
-    assert energy("PHHP", square) == 0
-    assert all(
-    value == 0.0
-    for pair, value in ENERGY_CONTACT_PAIRS.items()
-    if pair != ("H", "H")), "New energy() assumes only H-H contributions. If table is changed, revise!"
-    assert energy_old("HHHH", square) == energy("HHHH", square)
-    print("energy: ok")
+#     assert energy("HHHH", linear_conformation(4)) == 0
+#     square = [(0, 0), (1, 0), (1, 1), (0, 1)]
+#     assert energy("HHHH", square) == -1
+#     assert energy("HPPH", square) == -1
+#     assert energy("PHHP", square) == 0
+#     assert all(
+#     value == 0.0
+#     for pair, value in ENERGY_CONTACT_PAIRS.items()
+#     if pair != ("H", "H")), "New energy() assumes only H-H contributions. If table is changed, revise!"
+#     assert energy_old("HHHH", square) == energy("HHHH", square)
+#     print("energy: ok")
