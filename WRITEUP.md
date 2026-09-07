@@ -102,3 +102,17 @@ It misses almost everything else. The focus of HP-model only on hydrophobic inte
 8. What approaches did you consider and reject along the way, and why? If you had another day on this, what would you try next?
 
 If I had more time, I would add other methods that demonstrate excellent performance for such problems. For example, there is replica exchange Monte Carlo. It found global minima for lengths greater than 48 residues [4]. I would also modify my end criterion with a flexible number of steps based on the compactness of folding and the length of time without energy changes required to obtain the global minimum. I would also add heat capacity calculations and compactness measurements. One idea is to train a small machine learning model to predict future foldable ground-state energies based on compactness, H:P ratio, and other features. To do so, I would have to perform some brute-force calculations of exact ground-state conformers or find them in the literature. Then, I would train the model to predict the possible range of energies for future estimation using a stochastic method, if the range of energies is approximately true.
+
+## Post-Deadline Updates
+
+**Speed-Up Energy Calculations** Goes from O(n^2) to O(n). In new version each contact was found by scanning every pair of residues with hashing occupied lattice sites and checking four neighbors of each residue, that is O(n) as expected. Old version with O(n^2) was saved in 'energy.py' as 'energy_old' function and used to test the acceleration of module. 
+
+Cost of a single energy() call for HPHP... seqeunce with different lengths (n = 10, 30, 50) has the following trend:
+
+| n   | O(n^2), µs | O(n), µs | Acceleration |
+|-----|-----------|----------|---------|
+| 10  | 3.8       | 2.3      | 1.7x    |
+| 30  | 32.5      | 5.5      | 5.9x    |
+| 50  | 79.3      | 9.0      | 8.9x    |
+
+Full ran with command `main.py --nstarts 100` (seed = 0) best of three: old = 121 seconds, new = 64 seconds. (1.88x acceleration). Ground-state energies are identical, as far as hit rate and mean energy on both approaches. The next bottleneck is move generations and self-avoidance criterion.  
