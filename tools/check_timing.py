@@ -2,6 +2,10 @@
 This script is for fast time comparison 
 between old and new energy calculations
 """
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import random
 import timeit

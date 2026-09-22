@@ -116,3 +116,15 @@ Cost of a single energy() call for HPHP... seqeunce with different lengths (n = 
 | 50  | 79.3      | 9.0      | 8.9x    |
 
 Full ran with command `main.py --nstarts 100` (seed = 0) best of three: old = 121 seconds, new = 64 seconds. (1.88x acceleration). Ground-state energies are identical, as far as hit rate and mean energy on both approaches. The next bottleneck is move generations and self-avoidance criterion.  
+
+**Exact Ground States by Brute-Force Enumeration** Full enumeration gives exact solution for global optimization problem. Implemented in `bf.py` in three steps.
+
+*Step 1, DFS with backtracking.* The chain grows one residue at a time. A branch that revisits an occupied site is cut at once. One coordinate list and one set of occupied sites are reused throughout: append before the recursive call, pop after, copy only at the leaf. Memory is O(n), and cut on self-intersection makes the number of walks grow as µ^n with µ ~ 2.638.
+
+*Step 2, symmetry removed while generating.* Residue 0 at (0, 0) and residue 1 at (1, 0) remove translation and the four rotations. forcing the first turn upwards removes the reflection. Factor of eight, exact except for the straight walk, whose class has four members instead of eight: the number of classes is 1 + (c_k - 4) // 8.
+
+*Step 3, incremental energy + branch and bound + chain reversal.* Placing residue k adds only its contacts with already placed H residues, so nothing is recomputed at the leaf. An upper bound on the contacts the remaining residues can still add (free valences: 2 per interior H, 3 at a chain end, 0 for P) lets a subtree be dropped when even theoretical estimation cannot be better than the best found. In the end, there is mapping of reversed sequence to check symmetries only for palindromes. `exact_distinct_ground_states` folds it in afterwards via `canonical_structure`.
+
+*Additional tests.* SAW counts match OEIS A001411 for k = 1...10. The symmetry generator is cross-checked against `symmetry.py`: every class appears exactly once. The incremental energy is compared with a full `energy()` recomputation, and  O(n) energy with O(n^2), on every symmetry walk up to 11 residues. Pruned and unpruned searches must return the same energy and the same set of conformations. Reversal folding must merge nothing for non-palindromic sequences.
+
+*Result.* For the Unger-Moult sequence the exact minimum is E = -9, confirming the published value independently of annealing. Runtime on one core: 107.7 s by full enumeration, 1.6 s with branch and bound.
